@@ -21,3 +21,48 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 """
+l = []
+access = {}
+trunk = {}
+com = []
+d ={}
+flag = False
+
+def get_int_vlan_map(config_filename) :
+    flag = False
+    com = []
+    dacc,dtru = {},{}
+    with open(config_filename,'r') as f :
+        for l in f:
+            if 'Ethernet' in l :
+                _, intf = l.strip('\n').split()
+                flag = True
+
+            elif '!' in l and flag == True :
+                flag = False
+                if  vlan and mode == 'access':
+                    dacc[intf] = int(vlan)
+                    vlan = ""
+                elif vlan and mode == 'trunk':
+                    dtru[intf] = [int(x) for x in vlan.split(',')]
+                    vlan =""
+                                    
+            elif "vlan" in l and flag == True :
+               # com.append(l.strip(' \n'))
+                vlan = l.strip(' \n').split()[-1]
+
+            elif "mode" in l and flag == True:
+                mode = l.strip(' \n').split()[2]
+                
+            else :
+                continue
+      #  for k,v in d.items():
+      #      if "access" in d[k][0] :
+      #          access[k] = v
+      #      elif "trunk" in d[k][0] :
+      #          trunk[k] = v
+
+    return (dacc,dtru)
+
+res = get_int_vlan_map("config_sw1.txt")
+print(res)
